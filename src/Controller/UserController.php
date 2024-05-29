@@ -55,7 +55,7 @@ class UserController extends AbstractController
         }
 
         $user = $entityManager->getRepository(User::class)->findBy(['name' => $payload['nom']]);
-        if (false === empty($user)) {
+        if (!empty($user)) {
             return new JsonResponse('Name already exists', 400);
         }
 
