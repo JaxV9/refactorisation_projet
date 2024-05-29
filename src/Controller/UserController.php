@@ -18,9 +18,9 @@ class UserController extends AbstractController
     #[Route('/users', name: 'get_user_list', methods: ['GET'])]
     public function getUsersList(EntityManagerInterface $entityManager): JsonResponse
     {
-        $data = $entityManager->getRepository(User::class)->findAll();
+        $payload = $entityManager->getRepository(User::class)->findAll();
         return $this->json(
-            $data,
+            $payload,
             headers: ['Content-Type' => 'application/json;charset=UTF-8']
         );
     }
@@ -29,7 +29,7 @@ class UserController extends AbstractController
     public function createUser(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
 
-        $data = json_decode($request->getContent(), true);
+        $payload = json_decode($request->getContent(), true);
         $form = $this->createFormBuilder()
             ->add('nom', TextType::class, [
                 'constraints' => [
@@ -44,24 +44,24 @@ class UserController extends AbstractController
             ])
             ->getForm();
 
-        $form->submit($data);
+        $form->submit($payload);
 
         if ($form->isValid() === false) {
             return new JsonResponse('Invalid form', 400);
         }
 
-        if ($data['age'] > 21 === false) {
+        if ($payload['age'] > 21 === false) {
             return new JsonResponse('Wrong age', 400);
         }
 
-        $user = $entityManager->getRepository(User::class)->findBy(['name' => $data['nom']]);
-        if (count($user) !== 0) {
+        $user = $entityManager->getRepository(User::class)->findBy(['name' => $payload['nom']]);
+        if (empty($user) === false) {
             return new JsonResponse('Name already exists', 400);
         }
 
         $player = new User();
-        $player->setName($data['nom']);
-        $player->setAge($data['age']);
+        $player->setName($payload['nom']);
+        $player->setAge($payload['age']);
         $entityManager->persist($player);
         $entityManager->flush();
 
@@ -80,10 +80,9 @@ class UserController extends AbstractController
         }
 
         $player = $entityManager->getRepository(User::class)->findBy(['id' => $login]);
-        if (count($player) !== 1)
+        if (empty($player) === true)
             return new JsonResponse('Wrong id', 404); {
         }
-        $player = $entityManager->getRepository(User::class)->findBy(['id' => $login]);
 
         return new JsonResponse(array('name' => $player[0]->getName(), "age" => $player[0]->getAge(), 'id' => $player[0]->getId()), 200);
     }
@@ -93,8 +92,7 @@ class UserController extends AbstractController
     {
         $player = $entityManager->getRepository(User::class)->findBy(['id' => $login]);
 
-
-        if (count($player) !== 1) {
+        if (empty($player) === true) {
             return new JsonResponse('Wrong id', 404);
         }
 
@@ -142,14 +140,12 @@ class UserController extends AbstractController
     public function deleteUserById($id, EntityManagerInterface $entityManager): JsonResponse | null
     {
         $player = $entityManager->getRepository(User::class)->findBy(['id' => $id]);
-        if (count($player) !== 1) {
+        if (empty($player) === true) {
             return new JsonResponse('Wrong id', 404);
         }
         try {
             $entityManager->remove($player[0]);
             $entityManager->flush();
-
-            $userStillExist = $entityManager->getRepository(User::class)->findBy(['id' => $id]);
 
             if (empty($userStillExist)) {
                 return new JsonResponse('', 204);
