@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class UserController extends AbstractController
 {
-    #[Route('/users', name: 'liste_des_users', methods: ['GET'])]
+    #[Route('/users', name: 'get_user_list', methods: ['GET'])]
     public function getUsersList(EntityManagerInterface $entityManager): JsonResponse
     {
         $data = $entityManager->getRepository(User::class)->findAll();
@@ -25,7 +25,7 @@ class UserController extends AbstractController
         );
     }
 
-    #[Route('/users', name: 'user_post', methods: ['POST'])]
+    #[Route('/users', name: 'create_user', methods: ['POST'])]
     public function createUser(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         if ($request->getMethod() !== 'POST') {
@@ -76,7 +76,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/user/{login}', name: 'get_user_by_id', methods: ['GET'])]
-    public function getUserWithIdentifiant($login, EntityManagerInterface $entityManager): JsonResponse
+    public function getUserById($login, EntityManagerInterface $entityManager): JsonResponse
     {
         if (ctype_digit(!$login)) {
             return new JsonResponse('Wrong id', 404);
@@ -150,8 +150,8 @@ class UserController extends AbstractController
         return new JsonResponse(array('name' => $player[0]->getName(), "age" => $player[0]->getAge(), 'id' => $player[0]->getId()), 200);
     }
 
-    #[Route('/user/{id}', name: 'delete_user_by_identifiant', methods: ['DELETE'])]
-    public function deleteUser($id, EntityManagerInterface $entityManager): JsonResponse | null
+    #[Route('/user/{id}', name: 'delete_user_by_id', methods: ['DELETE'])]
+    public function deleteUserById($id, EntityManagerInterface $entityManager): JsonResponse | null
     {
         $player = $entityManager->getRepository(User::class)->findBy(['id' => $id]);
         if (count($player) !== 1) {
