@@ -75,13 +75,13 @@ class UserController extends AbstractController
         }
     }
 
-    #[Route('/user/{identifiant}', name: 'get_user_by_id', methods:['GET'])]
-    public function getUserWithIdentifiant($identifiant, EntityManagerInterface $entityManager): JsonResponse
+    #[Route('/user/{login}', name: 'get_user_by_id', methods:['GET'])]
+    public function getUserWithIdentifiant($login, EntityManagerInterface $entityManager): JsonResponse
     {
-        if(ctype_digit(!$identifiant))
+        if(ctype_digit(!$login))
             return new JsonResponse('Wrong id', 404);
         {
-            $player = $entityManager->getRepository(User::class)->findBy(['id'=>$identifiant]);
+            $player = $entityManager->getRepository(User::class)->findBy(['id'=>$login]);
             if(count($player) !== 1)
             return new JsonResponse('Wrong id', 404);
             {
@@ -91,10 +91,10 @@ class UserController extends AbstractController
        
     }
 
-    #[Route('/user/{identifiant}', name: 'udpate_user', methods:['PATCH'])]
-    public function updateUser(EntityManagerInterface $entityManager, $identifiant, Request $request): JsonResponse
+    #[Route('/user/{login}', name: 'udpate_user', methods:['PATCH'])]
+    public function updateUser(EntityManagerInterface $entityManager, $login, Request $request): JsonResponse
     {
-        $player = $entityManager->getRepository(User::class)->findBy(['id'=>$identifiant]);
+        $player = $entityManager->getRepository(User::class)->findBy(['id'=>$login]);
 
 
         if(count($player) !== 1)
