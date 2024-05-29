@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class GameController extends AbstractController
 {
     #[Route('/games', name: 'get_list_of_games', methods: ['GET'])]
-    public function getGameList(EntityManagerInterface $entityManager): JsonResponse
+    public function getListOfGame(EntityManagerInterface $entityManager): JsonResponse
     {
         $payload = $entityManager->getRepository(Game::class)->findAll();
         return $this->json(
@@ -25,7 +25,7 @@ class GameController extends AbstractController
     }
 
     #[Route('/games', name: 'create_game', methods: ['POST'])]
-    public function launchGame(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function createGame(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $userId = $request->headers->get('X-User-Id');
         if (!isset($userId) || ctype_digit($userId) === false) {
@@ -53,7 +53,7 @@ class GameController extends AbstractController
     }
 
     #[Route('/game/{id}', name: 'fetch_game', methods: ['GET'])]
-    public function getGameInfo(EntityManagerInterface $entityManager, $id): JsonResponse
+    public function fetchGame(EntityManagerInterface $entityManager, $id): JsonResponse
     {
         if (ctype_digit($id) === false) {
             return new JsonResponse('Game not found', 404);
@@ -69,7 +69,7 @@ class GameController extends AbstractController
     }
 
     #[Route('/game/{id}/add/{playerRightId}', name: 'add_user_right', methods: ['PATCH'])]
-    public function inviteToGame(Request $request, EntityManagerInterface $entityManager, $id, $playerRightId): JsonResponse
+    public function addUserRight(Request $request, EntityManagerInterface $entityManager, $id, $playerRightId): JsonResponse
     {
         $userId = $request->headers->get('X-User-Id');
 
@@ -118,7 +118,7 @@ class GameController extends AbstractController
     }
 
     #[Route('/game/{id}', name: 'send_choice', methods: ['PATCH'])]
-    public function play(Request $request, EntityManagerInterface $entityManager, $id): JsonResponse
+    public function sendChoice(Request $request, EntityManagerInterface $entityManager, $id): JsonResponse
     {
         $validChoices = ['rock', 'paper', 'scissors'];
 
@@ -303,7 +303,7 @@ class GameController extends AbstractController
         return new JsonResponse('coucou');
     }
 
-    #[Route('/game/{id}', name: 'annuler_game', methods: ['DELETE'])]
+    #[Route('/game/{id}', name: 'delete_game', methods: ['DELETE'])]
     public function deleteGame(EntityManagerInterface $entityManager, Request $request, $id): JsonResponse
     {
 
