@@ -46,16 +46,16 @@ class UserController extends AbstractController
 
         $form->submit($payload);
 
-        if ($form->isValid() === false) {
+        if (!$form->isValid()) {
             return new JsonResponse('Invalid form', 400);
         }
 
-        if ($payload['age'] > 21 === false) {
+        if (false === $payload['age'] > 21) {
             return new JsonResponse('Wrong age', 400);
         }
 
         $user = $entityManager->getRepository(User::class)->findBy(['name' => $payload['nom']]);
-        if (empty($user) === false) {
+        if (false === empty($user)) {
             return new JsonResponse('Name already exists', 400);
         }
 
@@ -80,7 +80,7 @@ class UserController extends AbstractController
         }
 
         $player = $entityManager->getRepository(User::class)->findBy(['id' => $login]);
-        if (empty($player) === true)
+        if (empty($player))
             return new JsonResponse('Wrong id', 404); {
         }
 
@@ -92,7 +92,7 @@ class UserController extends AbstractController
     {
         $player = $entityManager->getRepository(User::class)->findBy(['id' => $login]);
 
-        if (empty($player) === true) {
+        if (empty($player)) {
             return new JsonResponse('Wrong id', 404);
         }
 
@@ -107,7 +107,7 @@ class UserController extends AbstractController
             ->getForm();
 
         $form->submit($data);
-        if ($form->isValid() === false) {
+        if (!$form->isValid()) {
             return new JsonResponse('Invalid form', 400);
         }
 
@@ -140,7 +140,7 @@ class UserController extends AbstractController
     public function deleteUserById($id, EntityManagerInterface $entityManager): JsonResponse | null
     {
         $player = $entityManager->getRepository(User::class)->findBy(['id' => $id]);
-        if (empty($player) === true) {
+        if (empty($player)) {
             return new JsonResponse('Wrong id', 404);
         }
         try {
