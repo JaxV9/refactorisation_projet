@@ -28,9 +28,6 @@ class UserController extends AbstractController
     #[Route('/users', name: 'create_user', methods: ['POST'])]
     public function createUser(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
-        if ($request->getMethod() !== 'POST') {
-            return new JsonResponse('Wrong method', 405);
-        }
 
         $data = json_decode($request->getContent(), true);
         $form = $this->createFormBuilder()
@@ -85,13 +82,8 @@ class UserController extends AbstractController
         $player = $entityManager->getRepository(User::class)->findBy(['id' => $login]);
         if (count($player) !== 1)
             return new JsonResponse('Wrong id', 404); {
-            return new JsonResponse(array('name' => $player[0]->getName(), "age" => $player[0]->getAge(), 'id' => $player[0]->getId()), 200);
         }
-
         $player = $entityManager->getRepository(User::class)->findBy(['id' => $login]);
-        if (count($player) !== 1) {
-            return new JsonResponse('Wrong id', 404);
-        }
 
         return new JsonResponse(array('name' => $player[0]->getName(), "age" => $player[0]->getAge(), 'id' => $player[0]->getId()), 200);
     }
@@ -104,10 +96,6 @@ class UserController extends AbstractController
 
         if (count($player) !== 1) {
             return new JsonResponse('Wrong id', 404);
-        }
-
-        if ($request->getMethod() !== 'PATCH') {
-            return new JsonResponse('Wrong method', 405);
         }
 
         $data = json_decode($request->getContent(), true);
